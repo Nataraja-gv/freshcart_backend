@@ -5,7 +5,8 @@ const authRouter = require("./routers/authRouter");
 const sellerAuthRouter = require("./routers/sellerRouter");
 const categoryRouter = require("./routers/categoryRouter");
 const productRouter = require("./routers/productRouter");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const cartRouter = require("./routers/cartRouter");
 const app = express();
 
 const PORT = process.env.PORT;
@@ -17,6 +18,8 @@ app.use("/", authRouter);
 app.use("/", sellerAuthRouter);
 app.use("/", categoryRouter);
 app.use("/", productRouter);
+app.use("/", cartRouter);
+
 
 const startServer = async () => {
   try {

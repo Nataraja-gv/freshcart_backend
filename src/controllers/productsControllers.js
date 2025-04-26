@@ -229,16 +229,54 @@ const ProductDeleteControllers = async (req, res) => {
   try {
     const { _id } = req.body;
     const productData = await Product.findByIdAndDelete(_id);
-    if(!productData){
-        res.status(400).json({ message: "product not found" });
+    if (!productData) {
+      res.status(400).json({ message: "product not found" });
     }
-    res
-      .status(200)
-      .json({
-        message: `${productData.productName} product Deleted sucessfully`,
-      });
+    res.status(200).json({
+      message: `${productData.productName} product Deleted sucessfully`,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+const ProductChangeStock = async (req, res) => {
+  try {
+    const { _id, inStack } = req.body;
+    let inStackValue = inStack;
+    if (typeof inStack === "string") {
+      if (inStack.toLowerCase() === "true") {
+        inStackValue = true;
+      } else if (inStack.toLowerCase() === "false") {
+        inStackValue = false;
+      } else {
+        return res
+          .status(400)
+          .json({ message: "inStack must be true or false" });
+      }
+    }
+
+    if (typeof inStackValue !== "boolean") {
+      return res.status(400).json({ message: "inStack must be true or false" });
+    }
+    const data = {
+      inStack: inStackValue,
+    };
+
+    const productData = await Product.findByIdAndUpdate({ _id }, data, {
+      new: true,
+    });
+    if (!productData) {
+      res.status(400).json({ message: "product not found" });
+    }
+
+    const response = await productData.save();
+    res.status(200).json({
+      message: `${productData?.productName} product ${inStack ? "inStock":"not inStock" } updated Sucessfully`,
+      data: response,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -248,4 +286,5 @@ module.exports = {
   ProductViewControllers,
   ProductViewByUpdateIDControllers,
   ProductDeleteControllers,
+  ProductChangeStock,
 };

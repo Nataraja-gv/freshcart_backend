@@ -5,6 +5,7 @@ const {
   ProductViewControllers,
   ProductViewByUpdateIDControllers,
   ProductDeleteControllers,
+  ProductChangeStock,
 } = require("../controllers/productsControllers");
 const upload = require("../middleware/multer");
 const sellerAuth = require("../middleware/sellerauth");
@@ -27,5 +28,6 @@ productRouter.patch(
   upload.array("ProductImages", 5),
   ProductViewByUpdateIDControllers
 );
+productRouter.post("/products/update/stock", sellerAuth, ProductChangeStock);
 
 module.exports = productRouter;

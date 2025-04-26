@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { array } = require("../middleware/multer");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -27,6 +28,10 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
+  cartItems:{
+    type:Array,
+    default:{}
+  }
 },{timestamps:true});
 
 userSchema.methods.VerifyPassword = async function (password) {
