@@ -52,17 +52,31 @@ const loginControllers = async (req, res) => {
     const verifyPassword = await existingUser.VerifyPassword(password);
 
     if (!verifyPassword) {
-      return res.status(401).json({ message: "InValid Credentials" });
+      return res.status(401).json({ message: "Invalid Credentials" });
     }
-    
-    const token =  await existingUser.getJWt();
+
+    const token = await existingUser.getJWt();
     res.cookie("usertoken", token);
 
-    res.status(200).json({message:`${existingUser.name} logged`,data:existingUser})
-   
+    const { name, email: isEmail } = existingUser;
+    res.status(200).json({
+      message: `${existingUser.name} logged`,
+      data: { name, isEmail },
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-module.exports = { signUpControllers, loginControllers };
+const userLogout = async (req, res) => {
+  try {
+    res.cookie("usertoken", null, {
+      expires: new Date(Date.now()),
+    });
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { signUpControllers, loginControllers, userLogout };

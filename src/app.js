@@ -5,21 +5,29 @@ const authRouter = require("./routers/authRouter");
 const sellerAuthRouter = require("./routers/sellerRouter");
 const categoryRouter = require("./routers/categoryRouter");
 const productRouter = require("./routers/productRouter");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const cartRouter = require("./routers/cartRouter");
 const app = express();
+const cors = require("cors");
+const profileRouter = require("./routers/profileRouter");
 
 const PORT = process.env.PORT;
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use("/", authRouter);
 app.use("/", sellerAuthRouter);
 app.use("/", categoryRouter);
 app.use("/", productRouter);
 app.use("/", cartRouter);
-
+app.use("/", profileRouter);
 
 const startServer = async () => {
   try {
