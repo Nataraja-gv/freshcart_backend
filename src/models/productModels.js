@@ -28,7 +28,7 @@ const ProductSchema = new mongoose.Schema(
       ref: "ProductCategory",
       required: true,
     },
-    inStack:{
+    inStock:{
         type:Boolean,
         default:true
     }

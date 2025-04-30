@@ -4,7 +4,7 @@ const productRouter = require("../routers/productRouter");
 
 const ProductAddControllers = async (req, res) => {
   try {
-    const { productName, description, price, offerPrice, category, inStack } =
+    const { productName, description, price, offerPrice, category, inStock } =
       req.body;
 
     const validFields = [
@@ -12,7 +12,7 @@ const ProductAddControllers = async (req, res) => {
       "description",
       "price",
       "offerPrice",
-      "inStack",
+      "inStock",
       "ProductImages",
       "category",
     ];
@@ -55,21 +55,21 @@ const ProductAddControllers = async (req, res) => {
         .json({ message: "Offer price less than Product Price" });
     }
 
-    let inStackValue = inStack;
-    if (typeof inStack === "string") {
-      if (inStack.toLowerCase() === "true") {
-        inStackValue = true;
-      } else if (inStack.toLowerCase() === "false") {
-        inStackValue = false;
+    let inStockValue = inStock;
+    if (typeof inStock === "string") {
+      if (inStock.toLowerCase() === "true") {
+        inStockValue = true;
+      } else if (inStock.toLowerCase() === "false") {
+        inStockValue = false;
       } else {
         return res
           .status(400)
-          .json({ message: "inStack must be true or false" });
+          .json({ message: "inStock must be true or false" });
       }
     }
 
-    if (typeof inStackValue !== "boolean") {
-      return res.status(400).json({ message: "inStack must be true or false" });
+    if (typeof inStockValue !== "boolean") {
+      return res.status(400).json({ message: "inStock must be true or false" });
     }
 
     const images = req.files.map((item) => ({
@@ -82,7 +82,7 @@ const ProductAddControllers = async (req, res) => {
       price,
       offerPrice,
       category,
-      inStack,
+      inStock,
       ProductImages: images,
     };
 
@@ -137,7 +137,7 @@ const ProductViewControllers = async (req, res) => {
 
 const ProductViewByUpdateIDControllers = async (req, res) => {
   try {
-    const { productName, description, price, offerPrice, category, inStack } =
+    const { productName, description, price, offerPrice, category, inStock } =
       req.body;
 
     const _id = req.params._id;
@@ -147,7 +147,7 @@ const ProductViewByUpdateIDControllers = async (req, res) => {
       "description",
       "price",
       "offerPrice",
-      "inStack",
+      "inStock",
       "ProductImages",
       "category",
     ];
@@ -183,21 +183,21 @@ const ProductViewByUpdateIDControllers = async (req, res) => {
         .status(400)
         .json({ message: "Offer price less than Product Price" });
     }
-    let inStackValue = inStack;
-    if (typeof inStack === "string") {
-      if (inStack.toLowerCase() === "true") {
-        inStackValue = true;
-      } else if (inStack.toLowerCase() === "false") {
-        inStackValue = false;
+    let inStockValue = inStock;
+    if (typeof inStock === "string") {
+      if (inStock.toLowerCase() === "true") {
+        inStockValue = true;
+      } else if (inStock.toLowerCase() === "false") {
+        inStockValue = false;
       } else {
         return res
           .status(400)
-          .json({ message: "inStack must be true or false" });
+          .json({ message: "inStock must be true or false" });
       }
     }
 
-    if (typeof inStackValue !== "boolean") {
-      return res.status(400).json({ message: "inStack must be true or false" });
+    if (typeof inStockValue !== "boolean") {
+      return res.status(400).json({ message: "inStock must be true or false" });
     }
 
     const data = {
@@ -206,7 +206,7 @@ const ProductViewByUpdateIDControllers = async (req, res) => {
       price,
       offerPrice,
       category,
-      inStack: inStackValue,
+      inStock: inStockValue,
       ProductImages: updateImages,
     };
 
@@ -242,25 +242,25 @@ const ProductDeleteControllers = async (req, res) => {
 
 const ProductChangeStock = async (req, res) => {
   try {
-    const { _id, inStack } = req.body;
-    let inStackValue = inStack;
-    if (typeof inStack === "string") {
-      if (inStack.toLowerCase() === "true") {
-        inStackValue = true;
-      } else if (inStack.toLowerCase() === "false") {
-        inStackValue = false;
+    const { _id, inStock } = req.body;
+    let inStockValue = inStock;
+    if (typeof inStock === "string") {
+      if (inStock.toLowerCase() === "true") {
+        inStockValue = true;
+      } else if (inStock.toLowerCase() === "false") {
+        inStockValue = false;
       } else {
         return res
           .status(400)
-          .json({ message: "inStack must be true or false" });
+          .json({ message: "inStock must be true or false" });
       }
     }
 
-    if (typeof inStackValue !== "boolean") {
-      return res.status(400).json({ message: "inStack must be true or false" });
+    if (typeof inStockValue !== "boolean") {
+      return res.status(400).json({ message: "inStock must be true or false" });
     }
     const data = {
-      inStack: inStackValue,
+      inStock: inStockValue,
     };
 
     const productData = await Product.findByIdAndUpdate({ _id }, data, {
@@ -272,7 +272,7 @@ const ProductChangeStock = async (req, res) => {
 
     const response = await productData.save();
     res.status(200).json({
-      message: `${productData?.productName} product ${inStack ? "inStock":"not inStock" } updated Sucessfully`,
+      message: `${productData?.productName} product ${inStock ? "inStock":"not inStock" } updated Sucessfully`,
       data: response,
     });
   } catch (error) {
