@@ -61,4 +61,30 @@ const SellerloginControllers = async (req, res) => {
   }
 };
 
-module.exports = { SellerSignUpControllers, SellerloginControllers };
+const SellerProfile = async (req, res) => {
+  try {
+    const seller = req.seller;
+    res.status(200).json({ data: seller });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const SellerLogOut = async (req, res) => {
+  try {
+    res.cookie("sellertoken", null, {
+      expires: new Date(Date.now()),
+    });
+
+    res.status(200).json({ message: "Seller logged out successfully" });
+  } catch (errror) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  SellerSignUpControllers,
+  SellerloginControllers,
+  SellerProfile,
+  SellerLogOut,
+};
