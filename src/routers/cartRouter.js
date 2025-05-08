@@ -1,10 +1,9 @@
-const express= require("express");
+const express = require("express");
 const userAuth = require("../middleware/userauth");
 const updateCart = require("../controllers/cartControllers");
 
+const cartRouter = express.Router();
 
-const cartRouter= express.Router();
+cartRouter.post("/auth/cart/update", userAuth, updateCart);
 
-cartRouter.post("/auth/cart/update",userAuth,updateCart)
-
-module.exports=cartRouter
+module.exports = cartRouter;

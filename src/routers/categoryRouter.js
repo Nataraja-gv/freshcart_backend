@@ -13,7 +13,5 @@ router.post(
   CategoryController
 );
 
-router.get(
-  "/product/category/all",GetAllCategory
-);
+router.get("/product/category/all", GetAllCategory);
 module.exports = router;

@@ -4,45 +4,54 @@ const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { array } = require("../middleware/multer");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
+const cartItemSchema = new mongoose.Schema({
+  item: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "products",
     required: true,
   },
-  email: {
-    type: String,
+  quantity: {
+    type: Number,
     required: true,
-    unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error("invalid email");
-      }
-    },
+    min: 1,
   },
-  password: {
-    type: String,
-    required: true,
-    validate(value) {
-      if (!validator.isStrongPassword(value)) {
-        throw new Error("password Should strong");
-      }
-    },
-  },
-  cartItems:{
-    type:Array,
-    default:{}
+});
 
-  }
-},{timestamps:true});
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("invalid email");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("password Should strong");
+        }
+      },
+    },
+    cartItems: [cartItemSchema],
+  },
+  { timestamps: true }
+);
 
 userSchema.methods.VerifyPassword = async function (password) {
   const user = this;
-  const verifyPassword = await bcrypt.compare(password,user.password)
+  const verifyPassword = await bcrypt.compare(password, user.password);
   return verifyPassword;
-
-}
-
- 
+};
 
 userSchema.methods.getJWt = async function () {
   const user = this;

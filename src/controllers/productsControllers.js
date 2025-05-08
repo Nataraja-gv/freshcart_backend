@@ -137,8 +137,15 @@ const ProductViewControllers = async (req, res) => {
 
 const ProductViewByUpdateIDControllers = async (req, res) => {
   try {
-    const { productName, description, price, offerPrice, category, inStock } =
-      req.body;
+    const {
+      productName,
+      description,
+      price,
+      offerPrice,
+      category,
+      inStock,
+      ProductImages,
+    } = req.body;
 
     const _id = req.params._id;
 
@@ -157,11 +164,25 @@ const ProductViewByUpdateIDControllers = async (req, res) => {
       return res.status(400).json({ message: `invalid Product _id` });
     }
 
-    let updateImages = validProduct.ProductImages;
+    let updateImages = [];
+
+    if (ProductImages) {
+      let existingImages = [];
+      if (typeof ProductImages === "string") {
+        existingImages = [ProductImages];
+      } else if (Array.isArray(ProductImages)) {
+        existingImages = ProductImages;
+      }
+      updateImages = existingImages?.map((url) => ({
+        image_link: url,
+      }));
+    }
+
     if (req.files && req.files.length > 0) {
-      updateImages = req.files.map((item) => ({
+      newImages = req.files.map((item) => ({
         image_link: item.location,
       }));
+      updateImages = [...updateImages, ...newImages];
     }
 
     const invalidFields = Object.keys(req.body).filter(
@@ -272,7 +293,9 @@ const ProductChangeStock = async (req, res) => {
 
     const response = await productData.save();
     res.status(200).json({
-      message: `${productData?.productName} product ${inStock ? "inStock":"not inStock" } updated Sucessfully`,
+      message: `${productData?.productName} product ${
+        inStock ? "inStock" : "not inStock"
+      } updated Sucessfully`,
       data: response,
     });
   } catch (error) {
