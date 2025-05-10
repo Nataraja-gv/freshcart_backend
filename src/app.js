@@ -11,6 +11,7 @@ const app = express();
 const cors = require("cors");
 const profileRouter = require("./routers/profileRouter");
 const addressRouter = require("./routers/addressRouter");
+const orderRouter = require("./routers/orderRouter");
 
 const PORT = process.env.PORT;
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/", productRouter);
 app.use("/", cartRouter);
 app.use("/", profileRouter);
 app.use("/", addressRouter);
+app.use("/", orderRouter);
 
 const startServer = async () => {
   try {
