@@ -50,4 +50,26 @@ const getCartItems = async (req, res) => {
   }
 };
 
-module.exports = { updateCart, getCartItems };
+const deleteCartItem = async (req, res) => {
+  try {
+    const { itemId } = req.body;
+    const user = req.user;
+
+    const cartItems = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $pull: { cartItems: { _id: itemId } } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Cart item deleted successfully",
+      data: cartItems,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { updateCart, getCartItems, deleteCartItem };
