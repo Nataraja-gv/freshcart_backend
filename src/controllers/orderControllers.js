@@ -106,4 +106,45 @@ const getUserOrders = async (req, res) => {
   }
 };
 
-module.exports = { PlacePurchaseOrder, getAllOrder, getUserOrders };
+const chanageOrderStatus = async (req, res) => {
+  try {
+    const { status, isPaid } = req.body;
+    const orderId = req.params.id;
+ console.log(status,isPaid)
+    if (!orderId) {
+      return res.status(400).json({ message: "Order ID is required" });
+    }
+    
+
+    if (!status) {
+      return res
+        .status(400)
+        .json({ message: "isPaid and status are required" });
+    }
+
+    const validStatus = ["pending", "shipped", "delivered", "cancelled"];
+    if (!validStatus.includes(status)) {
+      return res.status(400).json({
+        message:
+          "Invalid status. Choose 'pending', 'shipped', 'delivered', or 'cancelled'",
+      });
+    }
+    const order = await Order.findById({ _id: orderId });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    order.status = status;
+    order.isPaid = isPaid;
+    await order.save();
+    res.status(200).json({ message: "Order status updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  PlacePurchaseOrder,
+  getAllOrder,
+  getUserOrders,
+  chanageOrderStatus,
+};
