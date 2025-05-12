@@ -1,10 +1,16 @@
 const express = require("express");
-const { PlacePurchaseOrder } = require("../controllers/orderControllers");
+const {
+  PlacePurchaseOrder,
+  getAllOrder,
+  getUserOrders,
+} = require("../controllers/orderControllers");
 const userAuth = require("../middleware/userauth");
+const sellerAuth = require("../middleware/sellerauth");
 
 const orderRouter = express.Router();
 
-orderRouter.post("/auth/order",userAuth,PlacePurchaseOrder)
+orderRouter.post("/auth/order", userAuth, PlacePurchaseOrder);
+orderRouter.get("/auth/seller/all/orders", sellerAuth, getAllOrder);
+orderRouter.get("/auth/users/all/orders", userAuth, getUserOrders);
 
-
-module.exports= orderRouter;
+module.exports = orderRouter;

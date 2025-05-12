@@ -33,6 +33,24 @@ const updateCart = async (req, res) => {
   }
 };
 
+const clearCart = async (req, res) => {
+  try {
+    const user = req.user;
+    const cartItems = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $set: { cartItems: [] } },
+      { new: true }
+    );
+    res.status(200).json({
+      message: "Cart cleared successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 const getCartItems = async (req, res) => {
   try {
     const user = req.user;
@@ -72,4 +90,4 @@ const deleteCartItem = async (req, res) => {
   }
 };
 
-module.exports = { updateCart, getCartItems, deleteCartItem };
+module.exports = { updateCart, getCartItems, deleteCartItem, clearCart };
