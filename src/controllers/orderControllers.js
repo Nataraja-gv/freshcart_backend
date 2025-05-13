@@ -67,19 +67,35 @@ const PlacePurchaseOrder = async (req, res) => {
 const getAllOrder = async (req, res) => {
   try {
     const sellerUser = req.seller;
+    let limit = parseInt(req.query.limit || 2);
+    let page = parseInt(req.query.page || 1);
+    limit = limit > 15 ? 15 : limit;
+    skip = (page - 1) * limit;
+
     if (!sellerUser) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    const totalOrders = await Order.countDocuments();
     const orders = await Order.find()
       .populate("items.item")
       .populate("address")
-      .populate("userId");
+      .populate("userId")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     if (!orders) {
       return res.status(404).json({ message: "No orders found" });
     }
-    res
-      .status(200)
-      .json({ message: "Orders fetched successfully", data: orders });
+
+    const totalPages = Math.ceil(totalOrders / limit);
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      data: orders,
+      totalOrders,
+      totalPages,
+      recordPerPage: limit,
+      currectPage: page,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -110,11 +126,10 @@ const chanageOrderStatus = async (req, res) => {
   try {
     const { status, isPaid } = req.body;
     const orderId = req.params.id;
- console.log(status,isPaid)
+
     if (!orderId) {
       return res.status(400).json({ message: "Order ID is required" });
     }
-    
 
     if (!status) {
       return res
