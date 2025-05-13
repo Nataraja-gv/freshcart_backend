@@ -110,7 +110,8 @@ const getUserOrders = async (req, res) => {
     const orders = await Order.find({ userId: user._id })
       .populate("items.item")
       .populate("address")
-      .populate("userId");
+      .populate("userId")
+      .sort({ createdAt: -1 })
     if (!orders) {
       return res.status(404).json({ message: "No orders found" });
     }
